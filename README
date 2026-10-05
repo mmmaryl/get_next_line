@@ -1,0 +1,137 @@
+*This project has been created as part of the 42 curriculum by maliuten.*
+
+# Get Next Line
+
+## Description
+
+Get Next Line is a C project whose goal is to implement a function that reads and returns one line at a time from a file descriptor.
+
+The function prototype is:
+
+char *get_next_line(int fd);
+
+Each call to get_next_line() returns the next available line, including the newline character (`\n`) when one is present.
+
+If the end of the file is reached and the last line does not end with a newline, the remaining characters are returned as the final line.
+
+When there is nothing left to read, or when an error occurs, the function returns `NULL`.
+
+The project also introduces the use of static variables in C in order to preserve unread data between consecutive calls to get_next_line().
+
+## Files
+
+- `get_next_line.c` — main get_next_line() function
+- `get_next_line_utils.c` — helper functions used by get_next_line()
+- `get_next_line.h` — function prototypes, required includes and BUFFER_SIZE definition
+- `README.md` — project documentation
+
+## Instructions
+
+Compile the project using:
+
+cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line.c get_next_line_utils.c main.c
+
+`BUFFER_SIZE` defines how many bytes `read()` may attempt to read at one time.
+
+It can be changed during compilation, for example:
+
+cc -Wall -Wextra -Werror -D BUFFER_SIZE=1 get_next_line.c get_next_line_utils.c main.c
+
+or:
+
+cc -Wall -Wextra -Werror -D BUFFER_SIZE=100 get_next_line.c get_next_line_utils.c main.c
+
+The project can also be compiled without defining BUFFER_SIZE explicitly. In that case, the default value defined in `get_next_line.h` is used.
+
+Run the compiled program with:
+
+./a.out
+
+A test `main.c` can be used locally to open a file and repeatedly call get_next_line(). The test file and main function are not part of the mandatory submitted files.
+
+## Algorithm
+
+The implementation uses a static variable called `stash`.
+
+The stash stores data that has already been read from the file descriptor but has not yet been returned to the caller.
+
+The algorithm works as follows:
+
+1. Check whether the stash already contains a newline character.
+2. If no newline is present, allocate a temporary buffer and call `read()`.
+3. Append the newly read buffer to the existing stash.
+4. Continue reading until:
+   - a newline is found,
+   - the end of the file is reached,
+   - or an error occurs.
+5. Once enough data has been collected, extract one line from the beginning of the stash.
+6. The returned line includes the newline character when one is present.
+7. Everything located after the returned line is saved as the new stash.
+8. The new stash remains available because it is declared as a static variable.
+9. On the next call to get_next_line(), the function continues using the remaining data stored in the stash.
+10. When there is no remaining data and `read()` reaches the end of the file, the function returns `NULL`.
+
+For example, if the stash contains:
+
+apple\nban
+
+the function returns:
+
+apple\n
+
+and keeps:
+
+ban
+
+in the stash for the next call.
+
+This approach avoids reading the entire file at once and only reads additional data when necessary.
+
+## Memory Management
+
+Memory is dynamically allocated for:
+
+- the temporary read buffer,
+- the accumulated stash,
+- the line returned by get_next_line(),
+- and the remaining stash after a line is extracted.
+
+Old dynamically allocated stash memory is freed whenever a new version replaces it.
+
+The caller is responsible for freeing every non-NULL line returned by get_next_line().
+
+Memory is also cleaned up when a read error occurs or when stored data is no longer needed.
+
+## Allowed External Functions
+
+The implementation only uses the external functions permitted by the subject:
+
+- `read`
+- `malloc`
+- `free`
+
+Libft is not used.
+
+## Resources
+
+Resources used while studying and implementing the project:
+
+- Get Next Line subject, version 14.2
+- `man 2 read`
+- `man 3 malloc`
+- `man 3 free`
+- C documentation concerning pointers, strings, static variables and dynamic memory allocation
+
+## AI Usage
+
+AI was used as a learning and debugging aid during the project.
+
+It was used to:
+
+- understand file descriptors and the behavior of `read()`;
+- understand static variables and why a stash is required;
+- understand BUFFER_SIZE and preprocessor macros;
+- review memory ownership and dynamic allocation;
+- explain some of the compiler errors and help identify bugs during testing.
+
+The implementation was developed on my own, step by step while reviewing the behavior and purpose of each part of the algorithm.

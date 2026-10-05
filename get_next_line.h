@@ -6,7 +6,7 @@
 /*   By: maryl <maryl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/29 20:03:04 by maryl             #+#    #+#             */
-/*   Updated: 2026/09/30 02:00:02 by maryl            ###   ########.fr       */
+/*   Updated: 2026/10/05 08:16:07 by maryl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@
 #  define BUFFER_SIZE 42
 # endif
 
-char    *get_next_line(int fd);
-size_t  ft_strlen(const char *str);
-int has_newline(const char *str);
-char    join(const char *stash, const char *buffer);
-char    *split_to_return(const char *stash);
-char    *update_stash(const char *old_stash);
+char	*get_next_line(int fd);
+char	*read_to_stash(int fd, char *stash);
+size_t	ft_strlen(const char *str);
+int		has_newline(const char *str);
+char	*join(const char *stash, const char *buffer);
+char	*split_to_return(const char *stash);
+char	*update_stash(char *old_stash);
 
 #endif
